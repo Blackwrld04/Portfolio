@@ -164,27 +164,76 @@
       text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
     }
 
-    /* Hero Animations */
-    @keyframes cinematicEntrance {
+    /* Hero Ambient & Dynamic Background Animations */
+    @keyframes heroBreathe {
       0% {
-        transform: scale(1.4);
-        filter: blur(20px) grayscale(100%);
-        opacity: 0;
+        transform: scale(1.03) translate(0, 0);
       }
-
-      20% {
-        opacity: 1;
+      50% {
+        transform: scale(1.10) translate(-1%, -0.8%);
       }
-
       100% {
-        transform: scale(1);
-        filter: blur(0px) grayscale(0%);
-        opacity: 1;
+        transform: scale(1.03) translate(0, 0);
       }
     }
 
-    .animate-cinematic {
-      animation: cinematicEntrance 3.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    .animate-hero-bg {
+      animation: heroBreathe 22s ease-in-out infinite alternate;
+      will-change: transform;
+    }
+
+    @keyframes orbDrift1 {
+      0%, 100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.35;
+      }
+      50% {
+        transform: translate(50px, 35px) scale(1.25);
+        opacity: 0.65;
+      }
+    }
+
+    @keyframes orbDrift2 {
+      0%, 100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.25;
+      }
+      50% {
+        transform: translate(-45px, -30px) scale(1.2);
+        opacity: 0.55;
+      }
+    }
+
+    .animate-orb-drift-1 {
+      animation: orbDrift1 12s ease-in-out infinite;
+      will-change: transform, opacity;
+    }
+
+    .animate-orb-drift-2 {
+      animation: orbDrift2 16s ease-in-out infinite;
+      will-change: transform, opacity;
+    }
+
+    @keyframes heroScanline {
+      0% {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      15% {
+        opacity: 0.35;
+      }
+      85% {
+        opacity: 0.35;
+      }
+      100% {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
+    }
+
+    .animate-scanline {
+      animation: heroScanline 9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      will-change: transform, opacity;
     }
 
     @keyframes slideUpFade {
@@ -630,20 +679,30 @@
   <header id="hero"
     class="relative w-full overflow-hidden flex flex-col justify-end pb-12 md:pb-24 min-h-screen md:h-screen">
 
-    <!-- Background Image Layer with Cinematic Animation -->
-    <div class="absolute inset-0 z-0 bg-black">
+    <!-- Background Image Layer with Increased Opacity & Continuous Motion -->
+    <div class="absolute inset-0 z-0 bg-neutral-950 overflow-hidden">
+      <!-- High-res Architecture Image with High Opacity & Breathe Animation -->
       <img
         src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/25904405-aa15-491b-9a03-de5fc75f18b3_3840w.webp"
-        class="w-full h-full object-cover animate-cinematic opacity-0" alt="Brutalist Architecture Detail"
+        class="w-full h-full object-cover animate-hero-bg opacity-80 sm:opacity-90 brightness-110 contrast-110"
+        alt="Brutalist Architecture Detail"
         loading="eager" fetchpriority="high" decoding="async">
-      <!-- Dark Gradients & Overlays -->
-      <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/60 to-neutral-950/20 opacity-90">
-      </div>
-      <div class="absolute inset-0 bg-gradient-to-r from-neutral-950/90 via-transparent to-neutral-950/80"></div>
-      <div class="bg-black/20 mix-blend-overlay absolute inset-0"></div>
+
+      <!-- Cyber Grid Pattern Overlay -->
+      <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0c_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0c_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_45%,#000_70%,transparent_100%)] pointer-events-none"></div>
+
+      <!-- Atmospheric Floating Light Orbs -->
+      <div class="absolute -top-24 -left-20 w-[420px] sm:w-[620px] h-[420px] sm:h-[620px] rounded-full bg-emerald-500/25 blur-[120px] pointer-events-none animate-orb-drift-1 mix-blend-screen"></div>
+      <div class="absolute top-1/4 -right-20 w-[380px] sm:w-[580px] h-[380px] sm:h-[580px] rounded-full bg-cyan-500/20 blur-[130px] pointer-events-none animate-orb-drift-2 mix-blend-screen"></div>
+
+      <!-- High-Tech Animated Scanline -->
+      <div class="absolute inset-x-0 h-24 bg-gradient-to-b from-transparent via-emerald-500/15 to-transparent pointer-events-none animate-scanline"></div>
+
+      <!-- Balanced Legibility Gradients (Clean contrast while preserving image details) -->
+      <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/45 to-neutral-950/15 opacity-70"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-neutral-950/75 via-transparent to-neutral-950/40"></div>
+      <div class="bg-black/10 mix-blend-overlay absolute inset-0"></div>
     </div>
-
-
 
     <!-- Main Hero Content Grid -->
     <div
@@ -653,23 +712,28 @@
       <div class="md:col-span-7 relative">
 
         <!-- Decorative Label & Status -->
-        <div class="flex items-center gap-3 mb-4 animate-slide-up [animation-delay:1.0s] opacity-0">
-          <span class="h-[1px] w-8 bg-emerald-500"></span>
+        <div class="flex items-center gap-3 mb-4 animate-slide-up [animation-delay:0.1s] opacity-0">
+          <span class="relative flex h-2 w-2 shrink-0">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
           <span
-            class="text-sm md:text-base font-mono uppercase tracking-[0.2em] md:tracking-[0.25em] text-emerald-400 font-medium">
+            class="text-xs sm:text-sm md:text-base font-mono uppercase tracking-[0.2em] md:tracking-[0.25em] text-emerald-400 font-medium flex items-center gap-2">
             Abdulquadri Olajide // Portfolio 2026
+            <span class="hidden sm:inline text-white/30">•</span>
+            <span class="hidden sm:inline text-white/50 text-xs">OFFENSIVE SECURITY ARCHITECT</span>
           </span>
         </div>
 
         <h1 class="font-bricolage text-white leading-[0.82] tracking-tight font-semibold">
           <span
-            class="block text-[14vw] md:text-[7.5rem] lg:text-[9.5rem] animate-slide-up [animation-delay:1.2s] opacity-0 text-white drop-shadow-2xl">
+            class="block text-[14vw] md:text-[7.5rem] lg:text-[9.5rem] animate-slide-up [animation-delay:0.25s] opacity-0 text-white drop-shadow-2xl">
             OFFENSIVE
           </span>
           <div
-            class="flex items-baseline gap-3 md:gap-6 -mt-1 md:-mt-6 animate-slide-up [animation-delay:1.4s] opacity-0">
+            class="flex items-baseline gap-3 md:gap-6 -mt-1 md:-mt-6 animate-slide-up [animation-delay:0.4s] opacity-0">
             <span
-              class="text-[14vw] md:text-[7.5rem] lg:text-[9.5rem] font-serif italic font-thin text-emerald-400/80 blur-[0.5px]">
+              class="text-[14vw] md:text-[7.5rem] lg:text-[9.5rem] font-serif italic font-thin text-emerald-400 drop-shadow-[0_0_25px_rgba(16,185,129,0.7)] blur-[0.2px]">
               &amp;
             </span>
             <span class="text-[14vw] md:text-[7.5rem] lg:text-[9.5rem] text-white drop-shadow-2xl">
@@ -682,17 +746,21 @@
       <!-- Right Column: Glassmorphism Card & Identity Specs -->
       <div class="md:col-span-4 md:col-start-9 flex flex-col justify-end pb-2 md:pb-6">
         <div
-          class="overflow-hidden animate-slide-up [animation-delay:1.6s] bg-neutral-950/70 border border-white/10 rounded-3xl p-6 md:p-8 relative shadow-2xl backdrop-blur-2xl ring-1 ring-white/5 opacity-0">
+          class="overflow-hidden animate-slide-up [animation-delay:0.55s] bg-neutral-950/75 border border-white/15 rounded-3xl p-6 md:p-8 relative shadow-2xl backdrop-blur-2xl ring-1 ring-white/10 hover:border-emerald-500/40 hover:shadow-[0_0_35px_rgba(16,185,129,0.15)] transition-all duration-500 opacity-0">
 
           <!-- Shimmer Overlay -->
           <div
-            class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/5 to-transparent z-0 pointer-events-none animate-shimmer-effect">
+            class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent z-0 pointer-events-none animate-shimmer-effect">
           </div>
 
           <div class="relative z-10">
-            <div class="flex items-center gap-2 mb-3">
-              <span class="text-emerald-400 font-mono text-[10px] uppercase tracking-widest">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-emerald-400 font-mono text-[10px] uppercase tracking-widest flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 // ROLE BRIEF
+              </span>
+              <span class="text-[10px] font-mono text-white/40 uppercase tracking-widest">
+                SYSTEMS ARCHITECT
               </span>
             </div>
             <p class="text-base md:text-lg text-white/90 font-light leading-relaxed mb-6 antialiased">
@@ -726,16 +794,16 @@
               <!-- Quick Action Links -->
               <div class="flex items-center gap-4">
                 <a href="#projects"
-                  class="group flex-1 flex items-center justify-between p-1 border-b border-white/30 hover:border-white transition-colors pb-2">
-                  <span class="text-xs font-mono uppercase tracking-wider text-white group-hover:text-white/80">
+                  class="group flex-1 flex items-center justify-between p-1 border-b border-white/30 hover:border-emerald-400 transition-colors pb-2">
+                  <span class="text-xs font-mono uppercase tracking-wider text-white group-hover:text-emerald-400 transition-colors">
                     Explore Deployments
                   </span>
                   <iconify-icon icon="solar:arrow-right-linear"
-                    class="text-white group-hover:translate-x-1 transition-transform" width="16"></iconify-icon>
+                    class="text-white group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" width="16"></iconify-icon>
                 </a>
                 <button onclick="openCertModal('ethical_hacker')"
-                  class="text-xs font-mono uppercase tracking-wider text-white hover:text-white/70 transition-colors flex items-center gap-1 border-b border-white/40 pb-2">
-                  <iconify-icon icon="solar:verified-check-bold" width="14" class="text-white"></iconify-icon>
+                  class="text-xs font-mono uppercase tracking-wider text-white/90 hover:text-white transition-colors flex items-center gap-1.5 border-b border-white/40 hover:border-emerald-400 pb-2 cursor-pointer">
+                  <iconify-icon icon="solar:verified-check-bold" width="14" class="text-emerald-400"></iconify-icon>
                   Verify Cert
                 </button>
               </div>
@@ -747,8 +815,9 @@
 
     <!-- Scroll Indicator -->
     <div
-      class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-slide-up [animation-delay:2.2s] opacity-0">
-      <span class="text-[9px] font-mono uppercase tracking-widest text-white/40">
+      class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-slide-up [animation-delay:0.75s] opacity-0">
+      <span class="text-[9px] font-mono uppercase tracking-widest text-white/50 flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
         SCROLL // MANIFEST
       </span>
       <div class="w-[1px] h-10 bg-gradient-to-b from-emerald-500 to-transparent"></div>
