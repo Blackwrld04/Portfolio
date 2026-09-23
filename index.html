@@ -162,50 +162,49 @@
       animation: slideUpFade 1s ease-out forwards;
     }
 
-    /* In-view Animation Logic */
+    /* In-view Animation Logic - Optimized for 60/120fps Mobile Scrolling */
     @keyframes animationIn {
       0% {
         opacity: 0;
-        transform: translateY(30px);
-        filter: blur(8px);
+        transform: translateY(16px);
       }
 
       100% {
         opacity: 1;
         transform: translateY(0);
-        filter: blur(0px);
       }
     }
 
     .animate-on-scroll {
       opacity: 0;
-      animation: animationIn 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      animation: animationIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      will-change: opacity, transform;
     }
 
     .delay-100 {
-      animation-delay: 100ms;
+      animation-delay: 50ms;
     }
 
     .delay-200 {
-      animation-delay: 200ms;
+      animation-delay: 100ms;
     }
 
     .delay-300 {
-      animation-delay: 300ms;
+      animation-delay: 150ms;
     }
 
     .delay-400 {
-      animation-delay: 400ms;
+      animation-delay: 200ms;
     }
 
     .delay-500 {
-      animation-delay: 500ms;
+      animation-delay: 250ms;
     }
 
     @keyframes slideInLeft {
       from {
         opacity: 0;
-        transform: translateX(-60px);
+        transform: translateX(-20px);
       }
 
       to {
@@ -217,7 +216,7 @@
     @keyframes slideInRight {
       from {
         opacity: 0;
-        transform: translateX(60px);
+        transform: translateX(20px);
       }
 
       to {
@@ -237,11 +236,32 @@
     }
 
     .animate-on-scroll[data-anim="slide-left"].animate {
-      animation: slideInLeft 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      animation: slideInLeft 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     .animate-on-scroll[data-anim="slide-right"].animate {
-      animation: slideInRight 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Snappy scroll on mobile - instant loading without delay gaps */
+    @media (max-width: 768px) {
+      .animate-on-scroll {
+        animation-duration: 0.25s !important;
+        animation-delay: 0s !important;
+      }
+      .animate-on-scroll[data-anim="slide-left"].animate,
+      .animate-on-scroll[data-anim="slide-right"].animate {
+        animation-duration: 0.25s !important;
+        animation-delay: 0s !important;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .animate-on-scroll {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
     }
 
     .animate-spin-slow-reverse {
@@ -430,14 +450,18 @@
               if (once) window.__inViewIO.unobserve(entry.target);
             }
           });
-        }, { threshold: 0.08, rootMargin: "0px 0px -5% 0px" });
+        }, { threshold: 0, rootMargin: "250px 0px 350px 0px" });
       }
       window.initInViewAnimations = function (selector = ".animate-on-scroll") {
         document.querySelectorAll(selector).forEach((el) => {
           window.__inViewIO.observe(el);
         });
       };
-      document.addEventListener("DOMContentLoaded", () => initInViewAnimations());
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", () => initInViewAnimations());
+      } else {
+        initInViewAnimations();
+      }
     })();
 
     // Configure Tailwind 3D & Typography Utilities
@@ -489,7 +513,7 @@
       <a href="#hero" class="flex items-center gap-3 pl-2 group">
         <div
           class="w-8 h-8 rounded-full overflow-hidden border border-white/20 group-hover:border-emerald-400 transition-all shrink-0">
-          <img src="assets/avatar.jpg" alt="Abdulquadri Olajide" class="w-full h-full object-cover object-top">
+          <img src="assets/avatar.jpg" alt="Abdulquadri Olajide" class="w-full h-full object-cover object-top" loading="eager" decoding="async">
         </div>
         <div class="flex flex-col">
           <span class="font-bricolage text-sm tracking-tight font-medium text-white flex items-center gap-1.5">
@@ -567,7 +591,8 @@
     <div class="absolute inset-0 z-0 bg-black">
       <img
         src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/25904405-aa15-491b-9a03-de5fc75f18b3_3840w.webp"
-        class="w-full h-full object-cover animate-cinematic opacity-0" alt="Brutalist Architecture Detail">
+        class="w-full h-full object-cover animate-cinematic opacity-0" alt="Brutalist Architecture Detail"
+        loading="eager" fetchpriority="high" decoding="async">
       <!-- Dark Gradients & Overlays -->
       <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/60 to-neutral-950/20 opacity-90">
       </div>
@@ -786,7 +811,8 @@
             <img
               src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/ea262fd9-14f0-4917-be69-86fd3b302ccd_1600w.webp"
               class="w-full h-full object-cover opacity-40 group-hover:opacity-60 group-hover:scale-105 transition-all duration-1000 ease-out grayscale group-hover:grayscale-0"
-              alt="TrustX Platform Architecture">
+              alt="TrustX Platform Architecture"
+              loading="lazy" decoding="async">
             <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/70 to-neutral-950/30"></div>
           </div>
 
@@ -859,7 +885,8 @@
               <img
                 src="assets/images/arcx_bg.jpg"
                 class="w-full h-full object-cover opacity-35 group-hover:opacity-50 group-hover:scale-105 transition-all duration-700 ease-out grayscale group-hover:grayscale-0"
-                alt="ARCX Digital Experience">
+                alt="ARCX Digital Experience"
+                loading="lazy" decoding="async">
               <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/60 to-transparent"></div>
             </div>
 
@@ -906,7 +933,8 @@
               <img
                 src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/68494c15-da1d-47aa-a9ac-b6ee8c9286cc_800w.webp"
                 class="w-full h-full object-cover opacity-35 group-hover:opacity-50 group-hover:scale-105 transition-all duration-700 ease-out grayscale group-hover:grayscale-0"
-                alt="ArcBounty Infrastructure">
+                alt="ArcBounty Infrastructure"
+                loading="lazy" decoding="async">
               <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/60 to-transparent"></div>
             </div>
 
@@ -953,7 +981,8 @@
             <img
               src="assets/images/gitbounty_bg.jpg"
               class="w-full h-full object-cover opacity-35 group-hover:opacity-50 group-hover:scale-105 transition-all duration-700 ease-out grayscale group-hover:grayscale-0"
-              alt="Git-Bounty Infrastructure">
+              alt="Git-Bounty Infrastructure"
+              loading="lazy" decoding="async">
             <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/60 to-transparent"></div>
           </div>
 
@@ -998,7 +1027,8 @@
             <img
               src="assets/images/pevra_bg.jpg"
               class="w-full h-full object-cover opacity-35 group-hover:opacity-50 group-hover:scale-105 transition-all duration-700 ease-out grayscale group-hover:grayscale-0"
-              alt="Pevra Telecom Identity">
+              alt="Pevra Telecom Identity"
+              loading="lazy" decoding="async">
             <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/60 to-transparent"></div>
           </div>
 
@@ -1043,7 +1073,8 @@
             <img
               src="assets/images/physics104_bg.jpg"
               class="w-full h-full object-cover opacity-35 group-hover:opacity-50 group-hover:scale-105 transition-all duration-700 ease-out grayscale group-hover:grayscale-0"
-              alt="Physics 104 Platform">
+              alt="Physics 104 Platform"
+              loading="lazy" decoding="async">
             <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/60 to-transparent"></div>
           </div>
 
@@ -1092,7 +1123,8 @@
             <img
               src="assets/images/twinsense_bg.jpg"
               class="w-full h-full object-cover opacity-35 group-hover:opacity-50 group-hover:scale-105 transition-all duration-700 ease-out grayscale group-hover:grayscale-0"
-              alt="TwinSense Digital Twin">
+              alt="TwinSense Digital Twin"
+              loading="lazy" decoding="async">
             <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/60 to-transparent"></div>
           </div>
 
@@ -1138,7 +1170,8 @@
             <img
               src="assets/images/aismallsmall_bg.jpg"
               class="w-full h-full object-cover opacity-35 group-hover:opacity-50 group-hover:scale-105 transition-all duration-700 ease-out grayscale group-hover:grayscale-0"
-              alt="AI Small Small Platform">
+              alt="AI Small Small Platform"
+              loading="lazy" decoding="async">
             <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/60 to-transparent"></div>
           </div>
 
@@ -1447,7 +1480,8 @@
 
             <div class="relative h-[440px] md:h-[500px] w-full rounded-2xl overflow-hidden bg-neutral-900">
               <img src="assets/avatar.jpg" alt="Abdulquadri Olajide"
-                class="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105">
+                class="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                loading="lazy" decoding="async">
               <div class="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/20 to-transparent"></div>
 
               <!-- Badges over photo -->
@@ -1753,7 +1787,8 @@
               class="w-20 h-20 md:w-24 md:h-24 bg-neutral-900 rounded-xl overflow-hidden shrink-0 relative flex items-center justify-center border border-white/10">
               <img
                 src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/44d41d4e-32d5-4432-bf2b-95b01b1df21f_320w.webp"
-                class="w-full h-full object-cover opacity-60" alt="Penetration Testing Texture">
+                class="w-full h-full object-cover opacity-60" alt="Penetration Testing Texture"
+                loading="lazy" decoding="async">
             </div>
             <div>
               <iconify-icon icon="solar:shield-warning-linear" width="28" class="text-white mb-1"></iconify-icon>
@@ -1841,7 +1876,8 @@
               class="w-20 h-20 md:w-24 md:h-24 bg-neutral-900 rounded-xl overflow-hidden shrink-0 relative flex items-center justify-center border border-white/10">
               <img
                 src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/a5122f84-43cb-4170-94c3-aded75f0d3ed_320w.webp"
-                class="w-full h-full object-cover opacity-60" alt="Full Stack Architecture">
+                class="w-full h-full object-cover opacity-60" alt="Full Stack Architecture"
+                loading="lazy" decoding="async">
             </div>
             <div>
               <iconify-icon icon="solar:code-square-linear" width="28" class="text-white mb-1"></iconify-icon>
@@ -1928,7 +1964,8 @@
               class="w-20 h-20 md:w-24 md:h-24 bg-neutral-900 rounded-xl overflow-hidden shrink-0 relative flex items-center justify-center border border-white/10">
               <img
                 src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/7de1229a-6a54-423d-a41c-2377d871bf2c_320w.jpg"
-                class="w-full h-full object-cover opacity-60" alt="Mathematical State Machines">
+                class="w-full h-full object-cover opacity-60" alt="Mathematical State Machines"
+                loading="lazy" decoding="async">
             </div>
             <div>
               <iconify-icon icon="solar:atom-linear" width="28" class="text-white mb-1"></iconify-icon>
